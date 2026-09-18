@@ -1,0 +1,614 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f4f2ea" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Scornal" />
+    <meta name="description" content="Scornal 成绩留声机：一个只保存在本机的个人成绩追踪 PWA，支持成绩记录、趋势分析与离线使用，无账号、无后端、无数据上传。" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Scornal" />
+    <meta property="og:title" content="Scornal 成绩留声机" />
+    <meta property="og:description" content="只保存在本机的个人成绩追踪 PWA：记录、趋势分析、离线可用，数据不离开你的设备。" />
+    <meta property="og:image" content="./icons/scornal-icon-512.png" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Scornal 成绩留声机" />
+    <meta name="twitter:description" content="只保存在本机的个人成绩追踪 PWA：记录、趋势分析、离线可用，数据不离开你的设备。" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/scornal-icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/scornal-icon-192.png" />
+    <title>Scornal 成绩留声机</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/identity-extra.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <section class="cover-screen" aria-label="Scornal welcome screen">
+        <div class="cover-sky" aria-hidden="true">
+          <span class="cloud cloud-a"></span>
+          <span class="cloud cloud-b"></span>
+          <span class="cloud cloud-c"></span>
+          <span class="light-spot spot-a"></span>
+          <span class="light-spot spot-b"></span>
+          <span class="light-spot spot-c"></span>
+          <span class="light-spot spot-d"></span>
+          <span class="sun-wash"></span>
+          <span class="cover-horizon"></span>
+          <span class="cover-trace trace-a"></span>
+          <span class="cover-trace trace-b"></span>
+          <span class="cover-aura aura-warm"></span>
+          <span class="cover-aura aura-cool"></span>
+          <span class="cover-leaf leaf-a"></span>
+          <span class="cover-leaf leaf-b"></span>
+          <span class="cover-leaf leaf-c"></span>
+          <span class="cover-leaf leaf-d"></span>
+          <span class="cover-mote mote-a"></span>
+          <span class="cover-mote mote-b"></span>
+          <span class="cover-mote mote-c"></span>
+          <span class="cover-mote mote-d"></span>
+        </div>
+        <div class="cover-card">
+          <img class="cover-app-mark" src="./icons/scornal-icon-192.png" alt="" width="56" height="56" />
+          <p class="cover-kicker">Personal growth journal</p>
+          <h1 class="wordmark" aria-label="Scornal">
+            <span>S</span><span>c</span><span>o</span><span>r</span><span>n</span><span>a</span><span>l</span>
+          </h1>
+          <p class="tagline">记录起伏，看见成长</p>
+          <div class="cover-identity-row">
+            <span data-identity-avatar-slot data-avatar-size="56" data-avatar-motion="static"></span>
+            <p class="cover-student-line" aria-label="学生姓名"><span class="student-name is-empty" data-student-name></span></p>
+          </div>
+          <button class="enter-button" type="button" data-enter>
+            <span>开始记录</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <main class="home-screen" aria-label="Scornal dashboard">
+        <header class="dashboard-hero">
+          <div class="hero-intro">
+            <p class="eyebrow dashboard-brand-line"><img src="./icons/scornal-icon-192.png" alt="" width="24" height="24" /> Scornal · 成长记录</p>
+            <div class="dashboard-identity-title">
+              <span data-identity-avatar-slot data-avatar-size="56" data-avatar-motion="subtle"></span>
+              <h2><span class="student-name is-empty" data-student-name></span><span class="title-suffix"> 的成绩簿</span><button class="name-edit-button" type="button" data-edit-name aria-label="填写学生姓名或昵称"><span class="name-edit-icon">✎</span><span class="name-edit-text" data-name-edit-text>填写姓名</span></button></h2>
+            </div>
+            <p class="hero-copy">把分数、排名和每一次变化放在一起看。安心记录，慢慢进步。</p>
+          </div>
+          <div class="dashboard-toolbar">
+            <nav class="hero-actions" aria-label="主要导航">
+              <button class="primary-link-button" type="button" data-show-add><span class="nav-icon" aria-hidden="true">＋</span><span>记录成绩</span></button>
+              <button class="ghost-button" type="button" data-show-list><span class="nav-icon" aria-hidden="true">≡</span><span>成绩列表</span></button>
+              <button class="ghost-button" type="button" data-show-analysis><span class="nav-icon" aria-hidden="true">↗</span><span>分析</span></button>
+              <button class="ghost-button" type="button" data-show-profile><span class="nav-icon" aria-hidden="true">○</span><span>我的</span></button>
+            </nav>
+            <div class="hero-utilities">
+              <button class="utility-button" type="button" data-open-subjects-hero><span aria-hidden="true">⚙</span> 选科设置</button>
+              <button class="utility-button" type="button" data-replay-cover><span aria-hidden="true">↺</span> 重看封面</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="growth-stage" aria-label="最近一次考试概览">
+          <span class="growth-stage-glow" aria-hidden="true"></span>
+          <span class="growth-cloud cloud-near" aria-hidden="true"></span>
+          <span class="growth-cloud cloud-mid" aria-hidden="true"></span>
+          <span class="growth-cloud cloud-far" aria-hidden="true"></span>
+          <span class="growth-stage-route" aria-hidden="true"></span>
+          <span class="growth-stage-paper paper-a" aria-hidden="true"></span>
+          <span class="growth-stage-paper paper-b" aria-hidden="true"></span>
+
+          <section class="latest-panel" aria-label="Latest exam snapshot">
+            <div class="panel-heading">
+              <p>最近一次</p>
+              <h3 data-latest-title>期末模拟</h3>
+            </div>
+            <div class="latest-grid">
+              <article>
+                <span class="metric-label">总分</span>
+                <strong data-total-score>--</strong>
+                <em data-total-score-change></em>
+              </article>
+              <article>
+                <span class="metric-label">校排</span>
+                <strong data-total-rank>--</strong>
+                <em data-total-rank-change></em>
+              </article>
+              <article>
+                <span class="metric-label">收录考试</span>
+                <strong data-exam-count>--</strong>
+                <em>按日期排序 · 默认近 10 次</em>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section class="backup-panel" data-backup-panel aria-label="Data backup and restore">
+          <div>
+            <p class="eyebrow">Backup · 本机数据</p>
+            <h3>备份 / 迁移成绩</h3>
+            <p>导出为 JSON 文件，或从旧设备备份中恢复。数据只在本机读取与写入，不会上传。</p>
+          </div>
+          <div class="backup-actions">
+            <button class="primary-link-button" type="button" data-export-records>导出 JSON</button>
+            <button class="ghost-button" type="button" data-import-records>导入恢复</button>
+            <label class="backup-mode">
+              <input type="checkbox" data-import-replace checked />
+              <span>导入时替换当前数据；取消勾选为合并</span>
+            </label>
+            <label class="backup-mode">
+              <input type="checkbox" data-include-avatars />
+              <span>包含自定义头像（默认不含。照片属于个人信息，且会明显增大备份体积）</span>
+            </label>
+            <input type="file" accept="application/json,.json" data-import-file hidden />
+            <p class="backup-help">手机导出会打开系统分享，可存到“文件”或发送到微信；恢复时选择保存的 JSON。</p>
+          </div>
+          <p class="backup-status" data-backup-status role="status">IndexedDB 数据已留在本机。</p>
+        </section>
+
+        <section class="subject-section" aria-label="Subject cards">
+          <div class="section-title">
+            <p>本次表现</p>
+            <h3>选择科目，查看分数与排名走势</h3>
+          </div>
+          <div class="subject-grid" data-subject-grid></div>
+        </section>
+        <section class="analysis-screen" data-analysis-page hidden aria-label="Progress regression analysis">
+          <header class="add-record-header">
+            <div>
+              <p class="eyebrow">Analysis · 进退步榜</p>
+              <h3>最近两次考试对照</h3>
+              <p>按日期自动比较最新两次记录，同时看分数变化与校排移动；校排数字越小表示排名越靠前。</p>
+            </div>
+            <div class="grade-list-actions">
+              <button class="primary-link-button" type="button" data-share-analysis>生成长图/分享</button>
+              <button class="ghost-button" type="button" data-show-dashboard-from-analysis>返回成绩簿</button>
+            </div>
+          </header>
+
+          <div class="analysis-summary" data-analysis-summary></div>
+          <div class="analysis-board-grid">
+            <article class="analysis-board analysis-board-progress">
+              <div class="analysis-board-heading">
+                <span>进步榜</span>
+                <small>分数上升或校排前进</small>
+              </div>
+              <div data-progress-board></div>
+            </article>
+            <article class="analysis-board analysis-board-regression">
+              <div class="analysis-board-heading">
+                <span>退步榜</span>
+                <small>分数下降或校排后退</small>
+              </div>
+              <div data-regression-board></div>
+            </article>
+          </div>
+          <section class="analysis-compare-card" aria-label="Subject delta table">
+            <div class="analysis-board-heading">
+              <span>逐科变化</span>
+              <small>最新一次 − 上一次</small>
+            </div>
+            <div class="analysis-compare-list" data-analysis-compare></div>
+          </section>
+        </section>
+        <section class="add-record-screen" data-add-page hidden aria-label="Add grade record">
+          <header class="add-record-header">
+            <div>
+              <p class="eyebrow">成绩入册</p>
+              <h3>记录一次考试</h3>
+              <p>只填写考试简称、日期、分数和校排；满分由系统默认保存，不需要学生输入。</p>
+            </div>
+            <button class="ghost-button" type="button" data-show-dashboard>返回成绩簿</button>
+          </header>
+
+          <form class="record-form" data-record-form>
+            <div class="form-card exam-card">
+              <label class="field-block">
+                <span>考试简称</span>
+                <small>用于趋势图</small>
+                <input name="examShortName" type="text" placeholder="二上月考1" autocomplete="off" />
+              </label>
+              <label class="field-block">
+                <span>日期</span>
+                <small>手填或点日历</small>
+                <div class="date-input-row">
+                  <input name="examDateDisplay" type="text" inputmode="numeric" placeholder="年/月/日" autocomplete="off" data-date-display />
+                  <input type="date" class="date-pick" data-date-pick aria-label="从日历选择日期" tabindex="-1" />
+                </div>
+                <input name="examDate" type="hidden" data-date-value />
+                <small class="date-hint" data-date-hint></small>
+              </label>
+            </div>
+
+            <div class="score-table" aria-label="Subject scores and school ranks">
+              <div class="score-table-head" aria-hidden="true">
+                <span>科目</span>
+                <span>分数</span>
+                <span>校排</span>
+              </div>
+
+              <div data-score-rows></div>
+            </div>
+
+            <footer class="form-actions">
+              <p data-record-status>保存后会写入本机 IndexedDB，并同步更新列表和走势。</p>
+              <button class="primary-link-button" type="submit">保存记录</button>
+            </footer>
+          </form>
+        </section>
+        <section class="grade-list-screen" data-list-page hidden aria-label="Grade record list">
+          <header class="add-record-header">
+            <div>
+              <p class="eyebrow">成绩列表</p>
+              <h3>已保存的考试</h3>
+              <p>按日期排序，点击一张记录卡先查看详情；删除需要二次确认。</p>
+            </div>
+            <div class="grade-list-actions">
+              <button class="primary-link-button" type="button" data-show-add-from-list>新增记录</button>
+              <button class="ghost-button" type="button" data-show-dashboard-from-list>返回成绩簿</button>
+            </div>
+          </header>
+
+          <div class="grade-list-toolbar">
+            <p data-list-summary>正在读取本机记录…</p>
+            <label class="all-toggle">
+              <input type="checkbox" data-list-show-all />
+              <span>全部</span>
+            </label>
+          </div>
+
+          <div class="grade-list-scroll" data-grade-list-scroll>
+            <div class="grade-list-track" data-grade-list></div>
+          </div>
+
+          <section class="list-edit-panel" data-edit-panel hidden aria-label="Edit grade record"></section>
+        </section>
+
+        <section class="exam-detail-screen" data-detail-page hidden aria-label="Exam detail">
+          <header class="add-record-header detail-header">
+            <div class="detail-identity-title">
+              <span data-identity-avatar-slot data-avatar-size="56" data-avatar-motion="static"></span>
+              <div>
+                <p class="eyebrow">考试详情</p>
+                <h3 data-detail-title>考试详情</h3>
+                <p data-detail-date>正在读取本机记录…</p>
+              </div>
+            </div>
+            <div class="grade-list-actions">
+              <button class="primary-link-button" type="button" data-share-exam>生成长图/分享</button>
+              <button class="primary-link-button" type="button" data-detail-edit>编辑</button>
+              <button class="ghost-button" type="button" data-detail-back>返回列表</button>
+            </div>
+          </header>
+
+          <div class="exam-detail-meta" data-detail-meta></div>
+          <div class="exam-detail-grid" data-detail-subjects></div>
+        </section>
+        <section class="profile-screen" data-profile-page hidden aria-label="我的">
+          <header class="add-record-header">
+            <div>
+              <p class="eyebrow">Profile · 我的</p>
+              <h3>个人信息与设置</h3>
+              <p>头像和姓名只保存在本机，用来显示在成绩簿与长图上。</p>
+            </div>
+            <button class="ghost-button" type="button" data-show-dashboard-from-profile>返回成绩簿</button>
+          </header>
+
+          <section class="profile-card" aria-label="个人资料">
+            <div class="profile-identity">
+              <button class="profile-avatar-button" type="button" data-open-avatar-studio aria-label="装扮头像">
+                <span data-identity-avatar-slot data-avatar-size="88" data-avatar-motion="subtle"></span>
+              </button>
+              <div class="profile-identity-text">
+                <p class="profile-name-line"><span class="student-name is-empty" data-student-name></span><span class="profile-name-suffix"> 同学</span></p>
+                <div class="profile-identity-actions">
+                  <button class="primary-link-button" type="button" data-open-avatar-studio>装扮头像</button>
+                  <button class="ghost-button" type="button" data-edit-name-profile>修改姓名</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-list" aria-label="设置与说明">
+            <button class="profile-row" type="button" data-open-privacy>
+              <span class="profile-row-icon">🔒</span>
+              <span class="profile-row-main"><span class="profile-row-title">隐私政策与权限说明</span><span class="profile-row-desc">数据只在本机，不上传、不追踪</span></span>
+              <span class="profile-row-arrow">›</span>
+            </button>
+            <button class="profile-row" type="button" data-open-subjects>
+              <span class="profile-row-icon">📚</span>
+              <span class="profile-row-main"><span class="profile-row-title">选科设置</span><span class="profile-row-desc" data-subjects-summary>语数英 + 选中小科</span></span>
+              <span class="profile-row-arrow">›</span>
+            </button>
+            <button class="profile-row" type="button" data-export-from-profile>
+              <span class="profile-row-icon">💾</span>
+              <span class="profile-row-main"><span class="profile-row-title">导出备份</span><span class="profile-row-desc">把所有成绩导出为 JSON 文件</span></span>
+              <span class="profile-row-arrow">›</span>
+            </button>
+            <div class="profile-row is-static">
+              <span class="profile-row-icon">📦</span>
+              <span class="profile-row-main"><span class="profile-row-title">数据存储</span><span class="profile-row-desc">全部保存在本机浏览器（IndexedDB / 本地存储），换设备请用导出备份迁移</span></span>
+            </div>
+            <div class="profile-row is-static">
+              <span class="profile-row-icon">ℹ️</span>
+              <span class="profile-row-main"><span class="profile-row-title">关于 Scornal</span><span class="profile-row-desc" data-app-version>成绩留声机 · 版本读取中…</span></span>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <div class="modal-layer" data-modal hidden>
+        <div class="modal-scrim" data-close-modal></div>
+        <section class="trend-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker" data-modal-subtitle>语文 · 近 10 次考试</p>
+              <h3 id="modal-title" data-modal-title>语文趋势</h3>
+            </div>
+            <button class="close-button" type="button" data-close-modal aria-label="关闭趋势弹窗">×</button>
+          </header>
+
+          <div class="modal-controls" aria-label="Trend controls">
+            <div class="segmented" role="tablist" aria-label="趋势口径切换" data-metric-tabs>
+              <button type="button" class="is-active" data-metric="score">分数</button>
+              <button type="button" data-metric="rank">排名</button>
+            </div>
+            <label class="all-toggle">
+              <input type="checkbox" data-show-all />
+              <span>全部</span>
+            </label>
+          </div>
+
+          <div class="chart-help" data-chart-help>Y 轴顶部为本科满分，数据线越高表示分数越高。</div>
+          <div class="chart-scroll" data-chart-scroll>
+            <svg class="trend-chart" data-chart role="img" aria-label="趋势折线图"></svg>
+          </div>
+          <footer class="modal-footer">
+            <span data-point-summary>按考试日期排序，横轴显示学生自定义简称。</span>
+          </footer>
+        </section>
+      </div>
+
+      <div class="share-modal-layer" data-share-modal hidden>
+        <div class="modal-scrim" data-close-share></div>
+        <section class="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker" data-share-subtitle>Long image</p>
+              <h3 id="share-title" data-share-title>分享长图预览</h3>
+            </div>
+            <button class="close-button" type="button" data-close-share aria-label="关闭长图预览">×</button>
+          </header>
+          <div class="share-preview-frame">
+            <img data-share-preview alt="生成的分享长图预览" />
+          </div>
+          <div class="share-message-field">
+            <label class="share-message-label" for="share-message-input">寄语（选填，会印在长图上）</label>
+            <input id="share-message-input" class="share-message-input" type="text" maxlength="40" data-share-message autocomplete="off" placeholder="写句话，例如：继续加油，下次更好！" />
+          </div>
+          <footer class="share-actions">
+            <span data-share-status>图片已生成，可保存到相册或发送给家长。</span>
+            <a class="primary-link-button" data-share-download download="scornal-share.png" href="#">保存 PNG</a>
+          </footer>
+        </section>
+      </div>
+      <div class="avatar-studio-layer" data-avatar-studio hidden>
+        <div class="modal-scrim" data-close-avatar-studio></div>
+        <section class="avatar-studio" role="dialog" aria-modal="true" aria-labelledby="avatar-studio-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker">Identity</p>
+              <h3 id="avatar-studio-title">头像装扮</h3>
+            </div>
+            <button class="close-button" type="button" data-close-avatar-studio aria-label="取消头像装扮">×</button>
+          </header>
+          <div class="avatar-studio-preview-band">
+            <div class="avatar-studio-preview" data-avatar-studio-preview></div>
+            <p data-avatar-studio-label>当前头像</p>
+          </div>
+          <div class="avatar-studio-tabs" role="tablist" aria-label="装扮类型">
+            <button type="button" role="tab" aria-selected="true" data-avatar-studio-tab="avatar">头像</button>
+            <button type="button" role="tab" aria-selected="false" data-avatar-studio-tab="frame">边框</button>
+          </div>
+          <div class="avatar-studio-panels">
+            <section role="tabpanel" data-avatar-studio-panel="avatar" aria-label="头像库">
+              <div class="avatar-catalog-groups" data-avatar-catalog-groups></div>
+            </section>
+            <section role="tabpanel" data-avatar-studio-panel="frame" aria-label="边框库" hidden>
+              <div class="frame-catalog-grid" data-frame-catalog-grid></div>
+            </section>
+          </div>
+          <p class="avatar-studio-status" data-avatar-studio-status role="status" aria-live="polite"></p>
+          <footer class="avatar-studio-actions">
+            <button class="text-button" type="button" data-restore-avatar-default>恢复默认</button>
+            <span class="avatar-studio-actions-spacer"></span>
+            <button class="ghost-button" type="button" data-cancel-avatar-studio>取消</button>
+            <button class="primary-link-button" type="button" data-apply-avatar-studio>应用</button>
+          </footer>
+          <input class="visually-hidden-input" type="file" data-avatar-file-input accept="image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,image/gif" aria-label="从相册选择照片" />
+        </section>
+      </div>
+      <div class="avatar-cropper-layer" data-avatar-cropper hidden>
+        <div class="modal-scrim" data-cropper-cancel></div>
+        <section class="avatar-cropper" role="dialog" aria-modal="true" aria-labelledby="avatar-cropper-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker">Crop</p>
+              <h3 id="avatar-cropper-title">调整头像</h3>
+            </div>
+            <button class="close-button" type="button" data-cropper-cancel aria-label="取消裁切并保留原头像">×</button>
+          </header>
+          <div class="avatar-cropper-stage" data-cropper-stage>
+            <canvas
+              class="avatar-cropper-canvas"
+              data-cropper-canvas
+              data-cropper-first-focus
+              tabindex="0"
+              role="application"
+              aria-label="头像裁切区域，方向键移动位置，加号减号缩放"
+            ></canvas>
+            <span class="avatar-cropper-mask" aria-hidden="true"></span>
+            <span class="avatar-cropper-frame" data-cropper-frame aria-hidden="true"></span>
+          </div>
+          <div class="avatar-cropper-controls">
+            <label class="avatar-cropper-zoom">
+              <span>缩放</span>
+              <input type="range" data-cropper-zoom min="0" max="100" step="1" value="0" aria-label="缩放头像" />
+            </label>
+            <div class="avatar-cropper-buttons">
+              <button class="ghost-button" type="button" data-cropper-rotate-left aria-label="向左旋转 90 度">↺ 左转</button>
+              <button class="ghost-button" type="button" data-cropper-rotate-right aria-label="向右旋转 90 度">↻ 右转</button>
+              <button class="ghost-button" type="button" data-cropper-reset>重置</button>
+              <button class="ghost-button" type="button" data-cropper-reselect>重新选择</button>
+            </div>
+            <label class="avatar-cropper-name">
+              <span>头像名称</span>
+              <input type="text" data-cropper-name maxlength="16" autocomplete="off" placeholder="我的照片" />
+            </label>
+          </div>
+          <p class="avatar-cropper-status" data-cropper-status role="status" aria-live="polite"></p>
+          <footer class="avatar-cropper-actions">
+            <button class="ghost-button" type="button" data-cropper-cancel>取消</button>
+            <button class="primary-link-button" type="button" data-cropper-confirm>确认使用</button>
+          </footer>
+        </section>
+      </div>
+      <div class="privacy-modal-layer" data-privacy-modal hidden>
+        <div class="modal-scrim" data-close-privacy></div>
+        <section class="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker">Privacy</p>
+              <h3 id="privacy-title">隐私政策与权限说明</h3>
+            </div>
+            <button class="close-button" type="button" data-close-privacy aria-label="关闭隐私政策">×</button>
+          </header>
+          <nav class="privacy-nav" aria-label="隐私与合规目录">
+            <button type="button" class="is-active" data-privacy-tab="policy">隐私政策</button>
+            <button type="button" data-privacy-tab="collection">收集清单</button>
+            <button type="button" data-privacy-tab="third-party">第三方共享</button>
+            <button type="button" data-privacy-tab="permissions">权限与本地能力</button>
+            <button type="button" data-privacy-tab="data">导出与删除</button>
+            <button type="button" data-privacy-tab="minors">未成年人保护</button>
+            <button type="button" data-privacy-tab="about">关于 Scornal</button>
+          </nav>
+          <div class="privacy-body">
+            <section data-privacy-section="policy">
+              <h4>隐私政策</h4>
+              <p class="privacy-lead">Scornal 是一个<strong>本机运行</strong>的成绩记录工具。你填写的姓名、选择的头像、录入的分数，全部保存在你自己这台设备的浏览器里，应用运行期间不会把它们发送到任何服务器。</p>
+              <p>没有账号，不需要注册，不收集手机号、邮箱、设备标识或位置。</p>
+              <h5>数据存在哪里</h5>
+              <p>成绩记录与自定义头像存在浏览器 IndexedDB（数据库 <code>scornal-records</code>）；姓名、选科、头像与边框选择等轻量设置存在 localStorage（键 <code>scornal.settings</code>）；当前所在页面等界面状态存在 sessionStorage。清除浏览器数据或卸载浏览器会一并删除，请用「导出备份」保留。</p>
+              <h5>我们不做什么</h5>
+              <p>不做用户画像，不做行为分析，不投放广告，不向任何第三方出售或共享你的信息。</p>
+              <h5>你的权利</h5>
+              <p>你可以随时查看、修改、导出和删除本机的全部数据，相关入口都在本页「导出与删除」一节。</p>
+              <h5>更新与联系</h5>
+              <p>说明版本：<span data-compliance="policyVersion">—</span>；生效日期：<span data-compliance="effectiveDate">—</span>。运营者：<span data-compliance="operatorName">—</span>；联系方式：<span data-compliance="contactEmail">—</span>。</p>
+              <p class="privacy-note">本页内容依据当前版本代码逐项核对撰写。Scornal 未进行任何合规认证，也不声称"绝对符合法律"；正式上线前应由实际运营者按主体、部署方式与适用地区完成法律复核。</p>
+            </section>
+            <section data-privacy-section="collection" hidden>
+              <h4>个人信息收集清单</h4>
+              <p>下表按代码中真实存在的字段逐项列出。未列出的信息，应用不会收集。</p>
+              <div class="privacy-inventory" data-privacy-inventory></div>
+            </section>
+            <section data-privacy-section="third-party" hidden>
+              <h4>第三方信息共享清单</h4>
+              <p class="privacy-highlight" data-third-party-summary>当前无第三方信息共享。</p>
+              <p>经代码审计确认：应用运行时不加载任何外部主机的脚本、样式、字体或图片，未接入统计、广告、崩溃上报或推送 SDK，运行时依赖为空（<code>dependencies: {}</code>）。应用发出的网络请求只有两类，且都指向自身同源文件：读取头像目录 <code>avatar-catalog.json</code>，以及 Service Worker 对同源静态资源的缓存回源。</p>
+              <h5>需要区分的三件事</h5>
+              <ul>
+                <li><strong>开源软件依赖 ≠ 共享个人信息。</strong>构建工具 Vite 只在开发者本机打包时使用，不随产品运行，也接触不到你的数据。</li>
+                <li><strong>系统分享 ≠ 后台共享。</strong>只有你点击「保存长图」或「导出备份」，浏览器才会调起系统分享面板；发给谁由你在系统面板里选择，属于你主动对外发送。</li>
+                <li><strong>应用数据处理 ≠ 托管服务访问日志。</strong>应用自身不上传数据；但把网页放在任何静态托管上，服务商都可能按其自身规则记录基础访问日志（如 IP、时间、请求路径）。这部分由托管服务商的政策约束，与应用是否上传你的成绩无关。</li>
+              </ul>
+              <p>当前托管服务商：<span data-compliance="hostingProvider">—</span>。</p>
+              <p class="privacy-note">若未来接入任何第三方服务，必须先更新本清单再上线。</p>
+            </section>
+            <section data-privacy-section="permissions" hidden>
+              <h4>系统权限与本地能力说明</h4>
+              <ul class="privacy-permissions">
+                <li><strong>本地存储（必需）</strong>：保存成绩、设置与裁切后的头像。这是应用能离线工作的基础。应用还会调用 <code>navigator.storage.persist()</code> 请求浏览器不要在空间紧张时自动清理数据，浏览器可以拒绝，拒绝后功能照常。</li>
+                <li><strong>相册 / 文件选择（可选）</strong>：仅在你点击「从相册选择」后调起系统选择器。应用<strong>只能读到你本次选中的那一个文件</strong>，无法浏览、扫描或持续访问你的相册，也不会在后台读取任何文件。不使用 <code>capture</code> 参数，因此不会强行打开摄像头。</li>
+                <li><strong>系统分享 / 下载（可选）</strong>：仅在你点击「保存长图」或「导出备份」时触发，用于把图片或备份文件交给系统分享面板或浏览器下载。</li>
+              </ul>
+              <p class="privacy-highlight">当前不使用摄像头、麦克风、定位、通讯录、通知与剪贴板，也不申请与功能无关的权限。</p>
+              <h5>照片是怎么处理的</h5>
+              <p>选中的照片在浏览器本机解码，按 EXIF 方向摆正，过大的图先安全降采样，再按你的裁切结果重新编码成 512×512 主图与 128×128 缩略图。因为经过 Canvas 重新编码，输出结果不含 EXIF、GPS、拍摄设备等元数据；原始照片不会被保存。</p>
+            </section>
+            <section data-privacy-section="data" hidden>
+              <h4>数据导出与删除</h4>
+              <h5>导出</h5>
+              <p>「导出备份」会生成一份 JSON 文件，默认只包含成绩记录与姓名、头像选择等设置。自定义头像照片<strong>默认不导出</strong>；如需一并保留，可在备份面板勾选「包含自定义头像」，勾选后备份文件里会含有裁切后的头像图片，属于个人信息，体积也会明显增大，请妥善保管该文件。</p>
+              <h5>导入</h5>
+              <p>导入会先完整校验文件内容，任何一处不合法都不会写入，现有数据保持原样。旧版本备份可正常恢复成绩与旧 emoji 头像；新版本备份可额外恢复自定义头像与边框选择。</p>
+              <h5>删除</h5>
+              <p>三个层级，按需选择。删除都在本机立即生效，且不可恢复。</p>
+              <div class="privacy-actions">
+                <button class="ghost-button" type="button" data-delete-custom-avatar>删除当前自定义头像</button>
+                <button class="ghost-button" type="button" data-clear-identity>清除身份信息（姓名与头像）</button>
+                <button class="danger-button" type="button" data-clear-all-data>清除全部本机数据</button>
+              </div>
+              <p class="privacy-status" data-privacy-status role="status" aria-live="polite"></p>
+              <p class="privacy-note">「清除全部本机数据」会删除成绩记录、姓名、头像照片、选科与所有设置，并清理离线缓存，需要二次确认。已导出的备份文件保存在你自己手上，不受影响。</p>
+            </section>
+            <section data-privacy-section="minors" hidden>
+              <h4>未成年人信息保护说明</h4>
+              <p>Scornal 面向中学生记录自己的考试成绩，因此在设计上采取数据最小化与本机处理：不收集年龄、性别、学校、班级、联系方式与设备标识，只保留你为了看懂自己成绩而必须填写的内容。</p>
+              <p>应用不会因为使用者是学生而额外收集信息，也<strong>不会为了判断年龄而反过来索取更多个人信息</strong>。</p>
+              <p>如果使用者未满 14 周岁，建议由监护人了解本说明并指导使用，特别是「从相册选择」头像与「保存长图分享」这两个涉及照片和对外发送的功能。姓名一栏可以只填昵称。</p>
+              <p>成绩与照片都留在这台设备上，监护人可随时通过本页的删除入口清除。</p>
+            </section>
+            <section data-privacy-section="about" hidden>
+              <h4>关于 Scornal</h4>
+              <p>Scornal（成绩留声机）是一个离线优先的成绩记录 PWA：录入每次考试的原始分与赋分、查看趋势与分析、生成分享长图，全部在本机完成。</p>
+              <ul class="privacy-meta">
+                <li>版本：<span data-app-version-detail>—</span></li>
+                <li>运营者：<span data-compliance="operatorName">—</span></li>
+                <li>联系方式：<span data-compliance="contactEmail">—</span></li>
+                <li>托管服务商：<span data-compliance="hostingProvider">—</span></li>
+                <li>备案信息：<span data-compliance="icpFiling">—</span></li>
+                <li>适用地区：<span data-compliance="jurisdiction">—</span></li>
+              </ul>
+              <p class="privacy-note">标注为「<span data-pending-label>待运营者补充</span>」的项目尚未确定，需在正式上线前填写到 <code>src/compliance-config.js</code>。</p>
+            </section>
+          </div>
+        </section>
+      </div>
+      <div class="subjects-modal-layer" data-subjects-modal hidden>
+        <div class="modal-scrim" data-subjects-scrim></div>
+        <section class="subjects-modal" role="dialog" aria-modal="true" aria-labelledby="subjects-title">
+          <header class="modal-header">
+            <div>
+              <p class="modal-kicker" data-subjects-kicker>第一次来，先选择你的科目</p>
+              <h3 id="subjects-title" data-subjects-title>个人选科</h3>
+            </div>
+            <button class="close-button" type="button" data-subjects-close aria-label="关闭选科" hidden>×</button>
+          </header>
+          <div class="subjects-modal-body">
+            <p class="subjects-intro">语文、数学、英语为必选主科（各满分 150）；下面勾选你想追踪的小科（各满分 100）。选几门，界面就只显示几门。</p>
+            <div class="subjects-group">
+              <p class="subjects-group-title">必选主科</p>
+              <div class="subjects-choice-grid" data-subjects-core></div>
+            </div>
+            <div class="subjects-group">
+              <p class="subjects-group-title">小科（可多选）</p>
+              <div class="subjects-choice-grid" data-subjects-electives></div>
+            </div>
+          </div>
+          <footer class="subjects-modal-footer">
+            <p class="subjects-total-preview" data-subjects-total>当前总分满分：750</p>
+            <button class="primary-link-button" type="button" data-subjects-confirm>确认选科</button>
+          </footer>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

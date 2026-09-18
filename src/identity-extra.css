@@ -1,0 +1,395 @@
+/* 矢量边框、裁切编辑器、自定义头像与合规页面样式。
+   与 styles.css 里既有的 identity-* 规则配套，避免在原文件里继续堆叠冲突规则。 */
+
+/* —— 矢量边框 —— */
+.identity-frame.is-vector { inset: 0; }
+/* 不透明底板必须垫在头像下方。.identity-avatar 有 isolation:isolate，
+   所以 z-index:-1 只会退到该头像自己的层叠上下文底部，不会穿透到页面背景。 */
+.identity-frame.is-backdrop { z-index: -1; }
+.identity-frame__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.identity-frame__ring { transform-origin: 50% 50%; }
+.identity-frame__mark { transform-box: fill-box; transform-origin: 50% 50%; }
+
+/* 大预览下的轻柔动效：只让装饰点动，环与底板保持稳定 */
+.identity-avatar.is-preview-motion .identity-frame__mark {
+  animation: identityMarkFloat 4.6s var(--ease-glide, ease-in-out) infinite;
+  animation-delay: var(--mark-delay, 0s);
+}
+.identity-avatar.is-preview-motion .identity-frame__banner {
+  animation: identityBannerSway 5.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+.identity-avatar.is-subtle-motion .identity-frame__mark {
+  animation: identityMarkFloat 6.8s ease-in-out infinite;
+  animation-delay: var(--mark-delay, 0s);
+}
+
+@keyframes identityMarkFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+  42% { transform: translateY(-6%) scale(1.07); opacity: .96; }
+  70% { transform: translateY(-1%) scale(1.01); }
+}
+
+@keyframes identityBannerSway {
+  0%, 100% { transform: rotate(0deg); }
+  45% { transform: rotate(1.1deg); }
+  75% { transform: rotate(-0.5deg); }
+}
+
+/* —— 自定义头像卡片 —— */
+.custom-avatar-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+}
+.custom-avatar-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid rgba(89, 77, 58, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.custom-avatar-card.is-selected {
+  border-color: var(--forest, #386a59);
+  background: rgba(56, 106, 89, 0.08);
+}
+.custom-avatar-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.text-button {
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ink-soft, #6a6058);
+  background: none;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.text-button:hover { color: var(--forest, #386a59); text-decoration: underline; }
+.text-button.is-danger:hover { color: #a8392b; }
+.text-button:focus-visible {
+  outline: 2px solid var(--forest, #386a59);
+  outline-offset: 2px;
+}
+.avatar-add-button {
+  display: flex;
+  min-height: 84px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  border: 1.5px dashed rgba(89, 77, 58, 0.34);
+  border-radius: 12px;
+  color: var(--ink-soft, #6a6058);
+  background: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+.avatar-add-button:hover {
+  border-color: var(--forest, #386a59);
+  color: var(--forest, #386a59);
+  background: rgba(56, 106, 89, 0.06);
+}
+.avatar-add-button:focus-visible {
+  outline: 2px solid var(--forest, #386a59);
+  outline-offset: 2px;
+}
+.avatar-add-icon { font-size: 20px; line-height: 1; }
+.avatar-group-hint {
+  margin: 6px 0 0;
+  color: var(--ink-soft, #6a6058);
+  font-size: 12px;
+}
+.avatar-studio-status {
+  min-height: 18px;
+  margin: 4px 14px 0;
+  color: var(--ink-soft, #6a6058);
+  font-size: 12.5px;
+}
+.avatar-studio-status[data-tone="error"] { color: #a8392b; }
+.avatar-studio-status[data-tone="success"] { color: var(--forest, #386a59); }
+.avatar-studio-actions-spacer { flex: 1 1 auto; }
+.visually-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* —— 裁切编辑器 —— */
+.avatar-cropper-layer {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.avatar-cropper-layer[hidden] { display: none !important; }
+.avatar-cropper-layer .modal-scrim { position: absolute; inset: 0; }
+.avatar-cropper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(420px, 100%);
+  max-height: min(92vh, 720px);
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding: 16px 18px 18px;
+  border-radius: 18px;
+  background: var(--card, #fff);
+  box-shadow: 0 28px 70px rgba(24, 58, 50, 0.24);
+}
+.avatar-cropper-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  isolation: isolate;
+}
+.avatar-cropper-canvas {
+  display: block;
+  border-radius: 12px;
+  background: var(--paper, #fff8ea);
+  touch-action: none; /* 手势自己处理，避免浏览器抢走双指缩放 */
+  cursor: grab;
+}
+.avatar-cropper-canvas:active { cursor: grabbing; }
+.avatar-cropper-canvas:focus-visible {
+  outline: 2px solid var(--forest, #386a59);
+  outline-offset: 3px;
+}
+/* 圆形遮罩只是提示最终显示范围，不拦截指针。
+   直接用一层 radial-gradient 背景，比 box-shadow + mask 更好预测。
+   closest-side 让 100% 等于半个边长，圆刚好内切于正方形画布；
+   默认的 farthest-corner 会把半径放大 √2 倍，圆就超出画布了。 */
+.avatar-cropper-mask {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle closest-side at 50% 50%, rgba(32, 60, 51, 0) 0 98%, rgba(32, 60, 51, 0.34) 99%);
+  pointer-events: none;
+}
+.avatar-cropper-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.avatar-cropper-frame .identity-frame { position: absolute; inset: 0; }
+.avatar-cropper-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.avatar-cropper-zoom,
+.avatar-cropper-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-soft, #6a6058);
+  font-size: 12.5px;
+}
+.avatar-cropper-zoom input[type="range"] { flex: 1 1 auto; min-width: 0; }
+.avatar-cropper-name input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(89, 77, 58, 0.22);
+  border-radius: 8px;
+  font: inherit;
+}
+.avatar-cropper-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.avatar-cropper-buttons button { flex: 0 1 auto; }
+.avatar-cropper-status {
+  min-height: 32px;
+  margin: 0;
+  color: var(--ink-soft, #6a6058);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.avatar-cropper-status[data-tone="error"] { color: #a8392b; }
+.avatar-cropper-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 手机端改为贴底全宽面板，拇指更好操作 */
+@media (max-width: 560px) {
+  .avatar-cropper-layer { align-items: end; padding: 0; }
+  .avatar-cropper {
+    width: 100%;
+    max-height: 94vh;
+    border-radius: 18px 18px 0 0;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+  .avatar-cropper-actions button { flex: 1 1 auto; }
+}
+
+/* —— 隐私与合规页面 —— */
+.privacy-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 20px 10px;
+  border-bottom: 1px solid rgba(89, 77, 58, 0.12);
+}
+.privacy-nav button {
+  padding: 5px 11px;
+  border: 1px solid rgba(89, 77, 58, 0.16);
+  border-radius: 999px;
+  color: var(--ink-soft, #6a6058);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+.privacy-nav button:hover { border-color: var(--forest, #386a59); color: var(--forest, #386a59); }
+.privacy-nav button.is-active {
+  border-color: var(--forest, #386a59);
+  color: #fff;
+  background: var(--forest, #386a59);
+}
+.privacy-nav button:focus-visible {
+  outline: 2px solid var(--forest, #386a59);
+  outline-offset: 2px;
+}
+.privacy-body h5 {
+  margin: 14px 0 4px;
+  color: var(--ink, #3d3733);
+  font-size: 13.5px;
+}
+.privacy-body code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(89, 77, 58, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.privacy-highlight {
+  margin: 8px 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--forest, #386a59);
+  border-radius: 0 8px 8px 0;
+  background: rgba(56, 106, 89, 0.08);
+  font-weight: 600;
+}
+.privacy-note {
+  margin-top: 12px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(197, 139, 42, 0.1);
+  color: var(--ink-soft, #6a6058);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.privacy-permissions,
+.privacy-meta { padding-left: 18px; }
+.privacy-permissions li,
+.privacy-meta li { margin-bottom: 7px; line-height: 1.6; }
+.privacy-meta { list-style: none; padding-left: 0; }
+[data-compliance].is-pending {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(197, 139, 42, 0.18);
+  color: #8a5a12;
+  font-size: 12.5px;
+}
+
+/* 收集清单：用卡片而不是横向表格，窄屏也能读 */
+.privacy-inventory {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.inventory-card {
+  padding: 12px 14px;
+  border: 1px solid rgba(89, 77, 58, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+}
+.inventory-card h5 { margin: 0 0 8px; font-size: 14px; }
+.inventory-card dl {
+  display: grid;
+  gap: 5px 12px;
+  margin: 0;
+  grid-template-columns: 1fr;
+}
+.inventory-card dl > div {
+  display: grid;
+  gap: 2px 10px;
+  grid-template-columns: 86px 1fr;
+}
+.inventory-card dt {
+  color: var(--ink-soft, #6a6058);
+  font-size: 12px;
+  font-weight: 600;
+}
+.inventory-card dd {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.privacy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+.danger-button {
+  padding: 7px 14px;
+  border: 1px solid rgba(168, 57, 43, 0.4);
+  border-radius: 8px;
+  color: #a8392b;
+  background: rgba(168, 57, 43, 0.06);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.danger-button:hover { border-color: #a8392b; background: rgba(168, 57, 43, 0.12); }
+.danger-button:focus-visible { outline: 2px solid #a8392b; outline-offset: 2px; }
+.privacy-status {
+  min-height: 18px;
+  margin: 6px 0 0;
+  color: var(--forest, #386a59);
+  font-size: 12.5px;
+}
+.privacy-status[data-tone="error"] { color: #a8392b; }
+
+@media (max-width: 560px) {
+  .privacy-nav { padding: 0 14px 10px; }
+  .inventory-card dl > div { grid-template-columns: 1fr; }
+  .inventory-card dt { margin-top: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .identity-avatar.is-preview-motion .identity-frame__mark,
+  .identity-avatar.is-subtle-motion .identity-frame__mark,
+  .identity-avatar.is-preview-motion .identity-frame__banner {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
